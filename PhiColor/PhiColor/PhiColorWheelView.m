@@ -9,6 +9,7 @@
 #import "PhiColorWheelView.h"
 #import "PhiColorWheelLayer.h"
 #import "PhiColorWheelWedgeSpinAnimation.h"
+#import "PhiColorWheelController.h"
 #import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
@@ -60,7 +61,7 @@
 
 @end
 
-@implementation PhiColorWheelSegmentTapGestureRecognizer
+@implementation PhiColorWheelSegmentDoubleTapGestureRecognizer
 
 @synthesize segment;
 
@@ -138,7 +139,7 @@
 	c = CGColorCreate(s, colorComponents);
 	[baseColors addObject:[UIColor colorWithCGColor:c]];
 	if (includePrimary)
-		[addColors addObject:[UIColor colorWithCGColor:c]];
+		[(NSMutableArray *)addColors addObject:[UIColor colorWithCGColor:c]];
 	CGColorRelease(c);
 	
 	//Blue
@@ -147,7 +148,7 @@
 	c = CGColorCreate(s, colorComponents);
 	[baseColors addObject:[UIColor colorWithCGColor:c]];
 	if (includeSecondary)
-		[addColors addObject:[UIColor colorWithCGColor:c]];
+		[(NSMutableArray *)addColors addObject:[UIColor colorWithCGColor:c]];
 	CGColorRelease(c);
  /**/	
 	//Magenta
@@ -155,7 +156,7 @@
 	c = CGColorCreate(s, colorComponents);
 	[baseColors addObject:[UIColor colorWithCGColor:c]];
 	if (includePrimary)
-		[addColors addObject:[UIColor colorWithCGColor:c]];
+		[(NSMutableArray *)addColors addObject:[UIColor colorWithCGColor:c]];
 	CGColorRelease(c);
 /**/
 	//Red
@@ -163,7 +164,7 @@
 	c = CGColorCreate(s, colorComponents);
 	[baseColors addObject:[UIColor colorWithCGColor:c]];
 	if (includeSecondary)
-		[addColors addObject:[UIColor colorWithCGColor:c]];
+		[(NSMutableArray *)addColors addObject:[UIColor colorWithCGColor:c]];
 	CGColorRelease(c);
 /**/
 	//Yellow
@@ -172,7 +173,7 @@
 	c = CGColorCreate(s, colorComponents);
 	[baseColors addObject:[UIColor colorWithCGColor:c]];
 	if (includePrimary)
-		[addColors addObject:[UIColor colorWithCGColor:c]];
+		[(NSMutableArray *)addColors addObject:[UIColor colorWithCGColor:c]];
 	CGColorRelease(c);
 //
 	//Green
@@ -180,7 +181,7 @@
 	c = CGColorCreate(s, colorComponents);
 	[baseColors addObject:[UIColor colorWithCGColor:c]];
 	if (includeSecondary)
-		[addColors addObject:[UIColor colorWithCGColor:c]];
+		[(NSMutableArray *)addColors addObject:[UIColor colorWithCGColor:c]];
 	CGColorRelease(c);
 	
 	/**///Black
@@ -189,7 +190,7 @@
 	colorComponents[2] = 0.0;
 	colorComponents[3] = 1.0;
 	c = CGColorCreate(s, colorComponents);
-	[addColors addObject:[UIColor colorWithCGColor:c]];
+	[(NSMutableArray *)addColors addObject:[UIColor colorWithCGColor:c]];
 	CGColorRelease(c);
 	
 	/**///White
@@ -198,7 +199,7 @@
 	colorComponents[2] = 0.0;
 	colorComponents[3] = 0.0;
 	c = CGColorCreate(s, colorComponents);
-	[addColors addObject:[UIColor colorWithCGColor:c]];
+	[(NSMutableArray *)addColors addObject:[UIColor colorWithCGColor:c]];
 	CGColorRelease(c);
 	/**/
 	CGColorSpaceRelease(s);
@@ -209,8 +210,8 @@
 	[CATransaction begin];
 	[CATransaction setValue:(id)kCFBooleanTrue
 					 forKey:kCATransactionDisableActions];
-	[self.layer setBaseColor:[[baseColors objectAtIndex:baseColorIndex] CGColor]];
-	[self.layer setAddColor:[[addColors objectAtIndex:addColorIndex] CGColor]];
+	[(PhiColorWheelLayer *)self.layer setBaseColor:[[baseColors objectAtIndex:baseColorIndex] CGColor]];
+	[(PhiColorWheelLayer *)self.layer setAddColor:[[addColors objectAtIndex:addColorIndex] CGColor]];
 	[CATransaction commit];
 }
 - (void)setupGestureRecognizers {
@@ -219,11 +220,11 @@
 	[self addGestureRecognizer:slider];
 	[slider release];
 	
-	PhiColorWheelSegmentTapGestureRecognizer *tap = [[PhiColorWheelSegmentTapGestureRecognizer alloc] initWithTarget:self action:@selector(promoteColor:)];
-	tap.segment = @"strength";
-	tap.numberOfTapsRequired = 2;
-	[self addGestureRecognizer:tap];
-	[tap release];
+	PhiColorWheelSegmentDoubleTapGestureRecognizer *dTap = [[PhiColorWheelSegmentDoubleTapGestureRecognizer alloc] initWithTarget:self action:@selector(promoteColor:)];
+	dTap.segment = @"strength";
+	dTap.numberOfTapsRequired = 2;
+	[self addGestureRecognizer:dTap];
+	[dTap release];
 	
 	PhiColorWheelSegmentFlickGestureRecognizer *flick;
 	flick = [[PhiColorWheelSegmentFlickGestureRecognizer alloc] initWithTarget:self action:@selector(flick:)];
@@ -315,14 +316,25 @@
 	return [(PhiColorWheelLayer *)[self layer] containsPoint:point inSegment:nil inLayer:[self layer]];
 }
 
-- (void)promoteColor:(PhiColorWheelSegmentTapGestureRecognizer *)tap {
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+	if (![(PhiColorWheelLayer *)[self layer] containsPoint:point inSegment:nil inLayer:[self layer]]) {
+		PhiColorWheelController *wheel = [PhiColorWheelController sharedColorWheelController];
+		if (wheel.wheelView == self)
+			[wheel setWheelVisible:NO animated:YES];
+	} else {
+		return self;
+	}
+	return nil;
+}
+
+- (void)promoteColor:(PhiColorWheelSegmentDoubleTapGestureRecognizer *)tap {
 	baseColorIndex = [baseColors indexOfObject:[self color]];
 	if (baseColorIndex == NSNotFound) {
 		baseColorIndex = [baseColors count];
 		[baseColors addObject:[self color]];
-		[self.layer setValue:[[baseColors lastObject] CGColor] forKey:@"baseColor"];
+		[self.layer setValue:(id)[[baseColors lastObject] CGColor] forKey:@"baseColor"];
 	} else {
-		[self.layer setValue:[[baseColors objectAtIndex:baseColorIndex] CGColor] forKey:@"baseColor"];
+		[self.layer setValue:(id)[[baseColors objectAtIndex:baseColorIndex] CGColor] forKey:@"baseColor"];
 	}
 }
 
@@ -349,12 +361,19 @@
 	baseColors = nil;
 	if (addColors) [addColors release];
 	addColors = nil;
+	[super dealloc];
 }
 
 - (UIColor *)color {
 	return [UIColor colorWithCGColor:[(PhiColorWheelLayer *)[self layer] color]];
 }
 
+- (CGFloat)strength {
+	return ((PhiColorWheelLayer *)self.layer).strength;
+}
+- (void)setStrength:(CGFloat)s {
+	((PhiColorWheelLayer *)self.layer).strength = s;
+}
 - (UIColor *)baseColor {
 	return [UIColor colorWithCGColor:((PhiColorWheelLayer *)self.layer).baseColor];
 }
@@ -375,17 +394,16 @@
 }
 
 - (void)setBaseAndAddColorForColor:(CGColorRef)color {
-	if (!CGColorEqualToColor(color, [[self layer] color])) {
+	if (!CGColorEqualToColor(color, [(PhiColorWheelLayer *)[self layer] color])) {
 		CGColorSpaceRef space = CGColorGetColorSpace(color);
 		CGColorSpaceModel model = CGColorSpaceGetModel(space);
 		size_t noc = CGColorSpaceGetNumberOfComponents(space);
 		CGColorRef c;
-		CGFloat *colorComponents = CGColorGetComponents(color);
+		CGFloat *colorComponents = (CGFloat *)CGColorGetComponents(color);
 		CGFloat addComponents[noc + 1];
-		CGFloat computedComponents[noc + 1];
 		CGFloat baseComponents[noc + 1];
 		CGFloat s = 0.0;
-		BOOL match;
+		BOOL match = NO;
 		int newAddColorIndex = addColorIndex;
 
 		//NSLog(@"colorComponents:      %1.2f %1.2f %1.2f %1.2f", colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
@@ -395,9 +413,10 @@
 					newAddColorIndex = --addColorIndex;
 				c = [[addColors objectAtIndex:newAddColorIndex] CGColor];
 				memcpy(addComponents, CGColorGetComponents(c), (noc + 1) * sizeof(CGFloat));
+				memcpy(baseComponents,          addComponents, (noc + 1) * sizeof(CGFloat));
 				//NSLog(@"addComponents:        %1.2f %1.2f %1.2f %1.2f %1.2f", addComponents[0], addComponents[1], addComponents[2], addComponents[3], addComponents[4]);
 				if (model == CGColorSpaceGetModel(CGColorGetColorSpace(c)))
-					match = [PhiColorWheelLayer computeBaseColor:baseComponents andStrength:&s fromColor:colorComponents forAddColor:CGColorGetComponents(c) model:model];
+					match = [PhiColorWheelLayer computeBaseColor:baseComponents andStrength:&s fromColor:colorComponents forAddColor:(CGFloat *)CGColorGetComponents(c) model:model];
 				if (!match) {
 					newAddColorIndex = [addColors count] - 2; // start with black (use white as a last resort)
 					do {
@@ -406,7 +425,7 @@
 							if (model == CGColorSpaceGetModel(CGColorGetColorSpace(c))) {
 								memcpy(addComponents, CGColorGetComponents(c), (noc + 1) * sizeof(CGFloat));
 								//NSLog(@"addComponents:        %1.2f %1.2f %1.2f %1.2f %1.2f", addComponents[0], addComponents[1], addComponents[2], addComponents[3], addComponents[4]);
-								if ([PhiColorWheelLayer computeBaseColor:baseComponents andStrength:&s fromColor:colorComponents forAddColor:CGColorGetComponents(c) model:model])
+								if ([PhiColorWheelLayer computeBaseColor:baseComponents andStrength:&s fromColor:colorComponents forAddColor:(CGFloat *)CGColorGetComponents(c) model:model])
 									break;
 							}
 						}

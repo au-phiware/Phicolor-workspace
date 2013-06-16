@@ -24,7 +24,7 @@
 
 @end
 
-@interface PhiColorWheelSegmentTapGestureRecognizer : UITapGestureRecognizer
+@interface PhiColorWheelSegmentDoubleTapGestureRecognizer : UITapGestureRecognizer
 {
 	NSString *segment;
 }
@@ -35,7 +35,7 @@
 
 
 @interface PhiColorWheelView : UIView {
-	NSArray *baseColors;
+	NSMutableArray *baseColors;
 	NSArray *addColors;
 	NSInteger baseColorIndex;
 	NSInteger addColorIndex;
@@ -50,7 +50,7 @@
 @property(nonatomic) CGFloat strength;
 @property(readonly, nonatomic) UIColor *color;
 
-- (void)setBaseAndAddColorForColor:(UIColor *)color;
+- (void)setBaseAndAddColorForColor:(CGColorRef)color;
 
 @end
 
