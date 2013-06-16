@@ -8,7 +8,23 @@
 
 #import "PhiColorWheelController.h"
 
+@class PhiColorPatchControl;
+
+@protocol PhiColorPatchControlDelegate <NSObject>
+
+@optional
+
+- (BOOL)colorPatchControlShouldBeginEditing:(PhiColorPatchControl *)colorPatch;
+- (void)colorPatchControlDidBeginEditing:(PhiColorPatchControl *)colorPatch;
+- (BOOL)colorPatchControlShouldEndEditing:(PhiColorPatchControl *)colorPatch;
+- (void)colorPatchControlDidEndEditing:(PhiColorPatchControl *)colorPatch;
+- (BOOL)colorPatchControl:(PhiColorPatchControl *)colorPatch shouldChangeToColor:(CGColorRef)aColor;
+- (CGColorRef)colorPatchControl:(PhiColorPatchControl *)colorPatch changeToColor:(CGColorRef)aColor;
+
+@end
+
 @interface PhiColorPatchControl : UIControl <PhiColorWheelResponder> {
+	IBOutlet id<PhiColorPatchControlDelegate> delegate;
 	BOOL didInitColor;
 }
 

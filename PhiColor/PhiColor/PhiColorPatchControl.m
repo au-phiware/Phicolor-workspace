@@ -25,7 +25,7 @@
 @implementation PhiColorPatchAnimationDelegate
 
 -(id)initWithOwner:(PhiColorPatchControl *)target {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		owner = target;
 	}
 	return self;
@@ -58,12 +58,14 @@
 }
 
 - (BOOL)canBecomeFirstResponder {
-	return self.window != nil;
+	return self.window != nil && (![delegate respondsToSelector:@selector(colorPatchControlShouldBeginEditing:)] || [delegate colorPatchControlShouldBeginEditing:self]);
 }
 
 - (BOOL)becomeFirstResponderAnimated:(BOOL)animate {
 	if ([super becomeFirstResponder]) {
 		[self editColor:nil animated:animate];
+        if ([delegate respondsToSelector:@selector(colorPatchControlDidBeginEditing:)])
+             [delegate colorPatchControlDidBeginEditing:self];
 		return YES;
 	}
 	return NO;
@@ -72,11 +74,17 @@
 	return [self becomeFirstResponderAnimated:YES];
 }
 
+- (BOOL)canResignFirstResponder {
+	return ![delegate respondsToSelector:@selector(colorPatchControlShouldEndEditing:)] || [delegate colorPatchControlShouldEndEditing:self];
+}
+
 - (BOOL)resignFirstResponderAnimated:(BOOL)animate {
 	if ([super resignFirstResponder]) {
 		PhiColorWheelController *wheel = [PhiColorWheelController sharedColorWheelController];
 		[wheel setDelegate:nil];
 		[wheel setWheelVisible:NO animated:animate];
+        if ([delegate respondsToSelector:@selector(colorPatchControlDidEndEditing:)])
+            [delegate colorPatchControlDidEndEditing:self];
 		return YES;
 	}
 	return NO;
@@ -101,6 +109,9 @@
 				patchBounds.origin.y += (patchBounds.size.height - patchBounds.size.width) / 2.0;
 			case UIControlContentVerticalAlignmentTop:
 				patchBounds.size.height = patchBounds.size.width;
+            case UIControlContentVerticalAlignmentFill:
+                // No adjustment needed
+                break;
 		}
 	} else {
 		switch (self.contentHorizontalAlignment) {
@@ -110,6 +121,9 @@
 				patchBounds.origin.x += (patchBounds.size.width - patchBounds.size.height) / 2.0;
 			case UIControlContentHorizontalAlignmentLeft:
 				patchBounds.size.width = patchBounds.size.height;
+            case UIControlContentVerticalAlignmentFill:
+                // No adjustment needed
+                break;
 		}
 	}
 
@@ -165,10 +179,17 @@
 }
 
 - (void)setColor:(UIColor *)color {
+    if ([delegate respondsToSelector:@selector(colorPatchControl:shouldChangeToColor:)] && ![delegate colorPatchControl:self shouldChangeToColor:color.CGColor])
+        return;
 	CAShapeLayer *theLayer = (CAShapeLayer *)self.layer;
+	CGColorRef rgbColor;
+	if ([delegate respondsToSelector:@selector(colorPatchControl:changeToColor:)])
+		rgbColor = [delegate colorPatchControl:self changeToColor:color.CGColor];
+	else
+		rgbColor = color.CGColor;
+
 	if (!CGColorEqualToColor(color.CGColor, theLayer.fillColor)) {
 		BOOL needsResetup = NO;
-		CGColorRef rgbColor = color.CGColor;
 
 		if (rgbColor) {
 			CGColorSpaceModel csm = CGColorSpaceGetModel(CGColorGetColorSpace(rgbColor));
