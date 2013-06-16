@@ -9,12 +9,14 @@
 #import "PhiColorWheelController.h"
 
 @interface PhiColorPatchControl : UIControl <PhiColorWheelResponder> {
-	id delegate;
+	BOOL didInitColor;
 }
 
 @property (nonatomic, retain) UIColor *color;
-@property (nonatomic, assign) id delegate;
 
+- (void)editColor:(id)sender animated:(BOOL)animate;
 - (IBAction)editColor:(id)sender;
+- (BOOL)becomeFirstResponderAnimated:(BOOL)animate;
+- (BOOL)resignFirstResponderAnimated:(BOOL)animate;
 
 @end

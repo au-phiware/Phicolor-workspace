@@ -9,12 +9,6 @@
 #import "PhiColorWheelController.h"
 #import "PhiColorWheelView.h"
 
-@interface PhiColorWheelController()
-
-@property (nonatomic, readonly) PhiColorWheelView *wheelView;
-
-@end
-
 @implementation PhiColorWheelController
 
 + (PhiColorWheelController *)sharedColorWheelController {
@@ -450,7 +444,7 @@
 }
 
 - (id)delegate {
-	[self.wheelView delegate];
+	return [self.wheelView delegate];
 }
 
 - (void)setDelegate:(id)delegate {

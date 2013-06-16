@@ -9,9 +9,49 @@
 #import "PhiColorPatchControl.h"
 #import "PhiColorWheelView.h"
 
+@interface PhiColorPatchControl (PhiColorPatchAnimationDelegate)
+@property (nonatomic, assign) BOOL didInitColor;
+@end
+
+@interface PhiColorPatchAnimationDelegate : NSObject
+{
+	PhiColorPatchControl *owner;
+}
+
+-(id)initWithOwner:(PhiColorPatchControl *)view;
+
+@end
+
+@implementation PhiColorPatchAnimationDelegate
+
+-(id)initWithOwner:(PhiColorPatchControl *)target {
+	if (self = [super init]) {
+		owner = target;
+	}
+	return self;
+}
+
+- (void)animationDidStop:(CAAnimation *)theAnimation finished:(BOOL)flag {
+	if (flag && owner.didInitColor)
+		[owner sendActionsForControlEvents:UIControlEventValueChanged];
+	owner.didInitColor = YES;
+}
+
+- (void)dealloc {
+	[super dealloc];
+}
+
+@end
+
+
 @implementation PhiColorPatchControl
 
-@synthesize delegate;
+- (BOOL)didInitColor {
+	return didInitColor;
+}
+- (void)setDidInitColor:(BOOL)flag {
+	didInitColor = flag;
+}
 
 + (Class)layerClass {
 	return [CAShapeLayer class];
@@ -106,6 +146,7 @@
     if ((self = [super initWithFrame:frame])) {
 		[self setupLayer];
 		[self setupGestureRecognizers];
+		didInitColor = NO;
     }
     return self;
 }
@@ -114,6 +155,7 @@
     if ((self = [super initWithCoder:aDecoder])) {
 		[self setupLayer];
 		[self setupGestureRecognizers];
+		didInitColor = NO;
     }
     return self;
 }
@@ -126,10 +168,35 @@
 	CAShapeLayer *theLayer = (CAShapeLayer *)self.layer;
 	if (!CGColorEqualToColor(color.CGColor, theLayer.fillColor)) {
 		BOOL needsResetup = NO;
-		if (color.CGColor) {
+		CGColorRef rgbColor = color.CGColor;
+
+		if (rgbColor) {
+			CGColorSpaceModel csm = CGColorSpaceGetModel(CGColorGetColorSpace(rgbColor));
 			if (!theLayer.fillColor)
 				needsResetup = YES;
-			theLayer.fillColor = color.CGColor;
+
+			if (csm == kCGColorSpaceModelCMYK || csm == kCGColorSpaceModelMonochrome) {
+				CGColorSpaceRef s = CGColorSpaceCreateDeviceRGB();
+				CGFloat rgbComponents[4] = {0.0, 0.0, 0.0, 1.0};
+				const CGFloat *colorComponents = CGColorGetComponents(rgbColor);
+
+				if (csm == kCGColorSpaceModelCMYK) {
+					rgbComponents[0] = (1.0 - colorComponents[0]) * (1.0 - colorComponents[3]);
+					rgbComponents[1] = (1.0 - colorComponents[1]) * (1.0 - colorComponents[3]);
+					rgbComponents[2] = (1.0 - colorComponents[2]) * (1.0 - colorComponents[3]);
+					rgbComponents[3] = colorComponents[4];
+				} else if (csm == kCGColorSpaceModelMonochrome) {
+					rgbComponents[0] = rgbComponents[1] = rgbComponents[2] = colorComponents[0];
+					rgbComponents[3] = colorComponents[1];
+				}
+
+				rgbColor = CGColorCreate(s, rgbComponents);
+				theLayer.fillColor = rgbColor;
+				CGColorRelease(rgbColor);
+				CGColorSpaceRelease(s);
+			} else {
+				theLayer.fillColor = rgbColor;
+			}
 		} else {
 			if (theLayer.fillColor)
 				needsResetup = YES;
@@ -139,21 +206,32 @@
 		if (needsResetup) {
 			[self setupPath];
 		}
-		if ([delegate respondsToSelector:@selector(colorDidChange)])
-			[delegate colorDidChange];
+		if (CFBooleanGetValue((CFBooleanRef)[CATransaction valueForKey:kCATransactionDisableActions])) {
+			[self sendActionsForControlEvents:UIControlEventValueChanged];
+		}
 	}
 }
 
-- (IBAction)editColor:(id)sender {
-	[self editColor:sender animated:YES];
+- (id<CAAction>)actionForLayer:(CALayer *)theLayer forKey:(NSString *)key {
+	if ([key isEqualToString:@"fillColor"]) {
+		CAAnimation *a = [CABasicAnimation animationWithKeyPath:key];
+		[a setDelegate:[[[PhiColorPatchAnimationDelegate alloc] initWithOwner:self] autorelease]];
+		return a;
+	}
+	return [super actionForLayer:theLayer forKey:key];
 }
-- (IBAction)editColor:(id)sender animated:(BOOL)animate {
+
+- (void)editColor:(id)sender animated:(BOOL)animate {
 	PhiColorWheelController *wheel = [PhiColorWheelController sharedColorWheelController];
 	[wheel setWheelColor:((CAShapeLayer *)self.layer).fillColor];
 	[wheel setTargetPoint:self.center inView:self.superview];
 	[wheel setDelegate:self];
 	[wheel setWheelVisible:YES animated:animate];
+	self.didInitColor = YES;
 	self.color = [[wheel wheelView] color];
+}
+- (IBAction)editColor:(id)sender {
+	[self editColor:sender animated:YES];
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
