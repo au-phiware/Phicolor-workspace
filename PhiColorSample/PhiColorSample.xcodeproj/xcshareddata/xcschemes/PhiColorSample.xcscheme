@@ -3,23 +3,9 @@
    LastUpgradeVersion = "0460"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "YES"
+      parallelizeBuildables = "NO"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "53B65286176D617E001024A5"
-               BuildableName = "PhiColorSample.app"
-               BlueprintName = "PhiColorSample"
-               ReferencedContainer = "container:PhiColorSample.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
@@ -32,6 +18,20 @@
                BuildableName = "libPhiColor.a"
                BlueprintName = "PhiColor"
                ReferencedContainer = "container:../PhiColor/PhiColor.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "53B65286176D617E001024A5"
+               BuildableName = "PhiColorSample.app"
+               BlueprintName = "PhiColorSample"
+               ReferencedContainer = "container:PhiColorSample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
