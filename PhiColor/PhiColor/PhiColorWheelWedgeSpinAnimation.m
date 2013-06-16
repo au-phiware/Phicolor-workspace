@@ -47,13 +47,13 @@
 
 - (void)animationDidStart:(CAAnimation *)anim {
 	if ([self.delegate respondsToSelector:@selector(animationDidStart:)]) {
-		[self.delegate performSelector:@selector(animationDidStart:) withObject:self];
+		[self.delegate animationDidStart:self];
 	}
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
 	if ([self.delegate respondsToSelector:@selector(animationDidStop:finished:)]) {
-		[self.delegate performSelector:@selector(animationDidStop:finished:) withObject:self withObject:flag];
+		[self.delegate animationDidStop:self finished:flag];
 	}
 }
 /**/
@@ -75,16 +75,16 @@
 			}
 		} else {
 			if ([key isEqualToString:@"baseColor"]) {
-				[layer setTransitionBaseColor:[[layer presentationLayer] valueForKey:key]];
+				[layer setTransitionBaseColor:(CGColorRef)[[layer presentationLayer] valueForKey:key]];
 			} else if ([key isEqualToString:@"addColor"]) {
-				[layer setTransitionAddColor:[[layer presentationLayer] valueForKey:key]];
+				[layer setTransitionAddColor:(CGColorRef)[[layer presentationLayer] valueForKey:key]];
 			}
 		}
 
 		if (self.toValue) {
 			[CATransaction begin];
 			[CATransaction setDisableActions:YES];
-			[layer setValue:self.toValue forKey:key];
+			[layer setValue:(id)self.toValue forKey:key];
 			[CATransaction commit];
 		}
 		

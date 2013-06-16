@@ -8,7 +8,7 @@
 
 typedef enum {
     PhiColorWheelWedgeSpinDirectionClockwise = UISwipeGestureRecognizerDirectionRight,
-    PhiColorWheelWedgeSpinDirectionAnticlockwise = UISwipeGestureRecognizerDirectionLeft,
+    PhiColorWheelWedgeSpinDirectionAnticlockwise = UISwipeGestureRecognizerDirectionLeft
 } PhiColorWheelWedgeSpinDirection;
 
 @interface PhiColorWheelWedgeSpinAnimation : CAPropertyAnimation {
