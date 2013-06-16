@@ -297,7 +297,7 @@
 			a.direction = flick.direction;
 			a.removedOnCompletion = NO;
 			a.toValue = [self colorForSegment:flick.segment inDirection:flick.direction];
-		a.delegate = self;
+			a.delegate = self;
 			[a runActionForKey:flick.segment object:self.layer arguments:nil];
 			//[self.layer addAnimation:a forKey:flick.segment];
 		//} else

@@ -343,7 +343,8 @@
 	view.transform = transform;
 }
 -(void)setWheelVisible:(BOOL)visible animated:(BOOL)animate {
-	PhiColorWheelView *view = self.wheelView;
+	PhiColorWheelView *view = [self.wheelView retain];
+	id delegate = [view.delegate retain];
 	if (visible) {
 		if (!wheelVisible || !animate) {
 			[[[UIApplication sharedApplication] keyWindow] addSubview:view];
@@ -367,9 +368,9 @@
 		}
 		if (!wheelVisible) {
 			wheelVisible = YES;
-			if (self.delegate && [self.delegate conformsToProtocol:@protocol(PhiColorWheelResponder)]
-					&& ![self.delegate isFirstResponder] && [self.delegate canBecomeFirstResponder])
-				[self.delegate becomeFirstResponder];
+			if (delegate && [delegate conformsToProtocol:@protocol(PhiColorWheelResponder)]
+					&& ![delegate isFirstResponder] && [delegate canBecomeFirstResponder])
+				[delegate becomeFirstResponder];
 		}
 	} else {
 		if (wheelVisible) {
@@ -386,12 +387,14 @@
 			}
 			[view removeFromSuperview];
 			wheelVisible = NO;
-			if (self.delegate && [self.delegate conformsToProtocol:@protocol(PhiColorWheelResponder)]
-					&& [self.delegate isFirstResponder] && [self.delegate canResignFirstResponder])
-				[self.delegate resignFirstResponder];
+			if (delegate && [delegate conformsToProtocol:@protocol(PhiColorWheelResponder)]
+					&& [delegate isFirstResponder] && [delegate canResignFirstResponder])
+				[delegate resignFirstResponder];
 			[view setDelegate:nil];
 		}
 	}
+	[view release];
+	[delegate release];
 }
 
 - (void)animationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context {
