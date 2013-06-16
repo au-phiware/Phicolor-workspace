@@ -402,7 +402,7 @@
 		CGFloat *colorComponents = (CGFloat *)CGColorGetComponents(color);
 		CGFloat addComponents[noc + 1];
 		CGFloat baseComponents[noc + 1];
-		CGFloat s = 0.0;
+		CGFloat s = 0.0f;
 		BOOL match = NO;
 		int newAddColorIndex = addColorIndex;
 

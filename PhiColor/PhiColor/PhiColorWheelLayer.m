@@ -716,7 +716,7 @@ struct wedge {
 		default:
 			break;
 	}
-	colorComponents[noc] = 1.0;
+	colorComponents[noc] = 1.0f;
 }
 + (BOOL)computeBaseColor:(CGFloat *)baseComponents andStrength:(CGFloat *)strength fromColor:(CGFloat *)colorComponents forAddColor:(CGFloat *)addComponents model:(CGColorSpaceModel)model {
 	CGFloat magnitude = 0.0;
