@@ -6,10 +6,10 @@
 //  Copyright 2010 Corin Lawson. All rights reserved.
 //
 
-#import "PhiColorPatchView.h"
+#import "PhiColorPatchControl.h"
 #import "PhiColorWheelView.h"
 
-@implementation PhiColorPatchView
+@implementation PhiColorPatchControl
 
 @synthesize delegate;
 
@@ -29,7 +29,7 @@
 	return NO;
 }
 - (BOOL)becomeFirstResponder {
-	[self becomeFirstResponderAnimated:YES];
+	return [self becomeFirstResponderAnimated:YES];
 }
 
 - (BOOL)resignFirstResponderAnimated:(BOOL)animate {
@@ -42,7 +42,7 @@
 	return NO;
 }
 - (BOOL)resignFirstResponder {
-	[self resignFirstResponderAnimated:YES];
+	return [self resignFirstResponderAnimated:YES];
 }
 
 - (void)setupPath {

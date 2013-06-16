@@ -8,7 +8,7 @@
 
 #import "PhiColorWheelController.h"
 
-@interface PhiColorPatchView : UIView <PhiColorWheelResponder> {
+@interface PhiColorPatchControl : UIControl <PhiColorWheelResponder> {
 	id delegate;
 }
 

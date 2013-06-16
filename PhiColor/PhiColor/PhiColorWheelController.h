@@ -6,6 +6,8 @@
 //  Copyright 2010 Corin Lawson. All rights reserved.
 //
 
+@protocol PhiColorWheelResponder;
+
 @protocol PhiColorWheelResponder
 - (BOOL)isFirstResponder;
 - (BOOL)canResignFirstResponder;

@@ -7,4 +7,4 @@
 //
 
 #import "PhiColorWheelController.h"
-#import "PhiColorPatchView.h"
+#import "PhiColorPatchControl.h"
