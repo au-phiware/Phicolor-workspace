@@ -10,6 +10,8 @@
 #import "PhiColorWheelWedgeSpinAnimation.h"
 
 @interface PhiColorWheelLayer ()
+@property (nonatomic, readonly) CGColorRef transitionAddColor;
+@property (nonatomic, readonly) CGColorRef transitionBaseColor;
 @end
 
 @implementation PhiColorWheelLayer
@@ -30,8 +32,10 @@
 
 - (id)initWithLayer:(id)layer {
 	if (self = [super initWithLayer:layer]) {
-		transitionAddColor = CGColorRetain([layer transitionAddColor]);
-		transitionBaseColor = CGColorRetain([layer transitionBaseColor]);
+		if ([layer isKindOfClass:[PhiColorWheelLayer class]]) {
+			transitionAddColor = CGColorRetain([(PhiColorWheelLayer *)layer transitionAddColor]);
+			transitionBaseColor = CGColorRetain([(PhiColorWheelLayer *)layer transitionBaseColor]);
+		}
 	}
 	return self;
 }
@@ -107,8 +111,14 @@ struct wedge {
 };
 
 - (void)drawInContext:(CGContextRef)c {
-	CGColorRef wheelColor = [[UIColor blackColor] CGColor];
-	CGColorRef wheelHighlightColor = [[UIColor colorWithRed:1.0 green:1.0 blue:0.95 alpha:0.33] CGColor];
+	CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+	CGFloat colorComponents[4] = {0.0, 0.0, 0.0, 1.0};
+	CGColorRef wheelColor = CGColorCreate(space, colorComponents);
+	colorComponents[0] = 1.0;
+	colorComponents[1] = 1.0;
+	colorComponents[2] = 0.95;
+	colorComponents[3] = 0.33;
+	CGColorRef wheelHighlightColor = CGColorCreate(space, colorComponents);
 	CGFloat margin = MIN(self.wedgeMargin, self.bounds.size.height / 27.0);
 	CGFloat cornerRadius = self.wedgeCornerRadius;
 	CGFloat height = self.wedgeHeight;
@@ -282,9 +292,9 @@ struct wedge {
 					resultWedgeArc.end = wedgeAngle - spacedWedgeWidth * (angleWeight - 0.5);
 					if (resultWedgeArc.start < w.arc.end) {
 						if (self.baseColorAngleWeight >= self.addColorAngleWeight) {
-							transitionMidColor = [self createColorWithBaseColor:self.baseColor addColor:transitionAddColor];
+							transitionMidColor = [self copyColorWithBaseColor:self.baseColor addColor:transitionAddColor];
 						} else {
-							transitionMidColor = [self createColorWithBaseColor:transitionBaseColor addColor:self.addColor];
+							transitionMidColor = [self copyColorWithBaseColor:transitionBaseColor addColor:self.addColor];
 						}
 						resultWedge = CGPathCreateMutable();
 						CGPathAddArc(resultWedge, NULL, 0.0, 0.0, self.strength * (height - 4.0 * wwHeight) + 2.0 * wwHeight,
@@ -306,9 +316,9 @@ struct wedge {
 					resultWedgeArc.end = MIN(wedgeAngle - spacedWedgeWidth * (angleWeight + 0.5), wedgeAngle - spacedWedgeWidth * (midAngleWeight - 0.5));
 					if (resultWedgeArc.end > w.arc.start) {
 						if (self.baseColorAngleWeight <= self.addColorAngleWeight) {
-							transitionMidColor = [self createColorWithBaseColor:self.baseColor addColor:transitionAddColor];
+							transitionMidColor = [self copyColorWithBaseColor:self.baseColor addColor:transitionAddColor];
 						} else {
-							transitionMidColor = [self createColorWithBaseColor:transitionBaseColor addColor:self.addColor];
+							transitionMidColor = [self copyColorWithBaseColor:transitionBaseColor addColor:self.addColor];
 						}
 						resultWedge = CGPathCreateMutable();
 						CGPathAddArc(resultWedge, NULL, 0.0, 0.0, self.strength * (height - 4.0 * wwHeight) + 2.0 * wwHeight,
@@ -638,6 +648,9 @@ struct wedge {
 #endif
 	
 	/**/
+	CGColorSpaceRelease(space);
+	CGColorRelease(wheelColor);
+	CGColorRelease(wheelHighlightColor);
 	CGPathRelease(wheel);
 	CGPathRelease(addWedge[0]);
 	CGPathRelease(addWedge[1]);
@@ -790,13 +803,13 @@ struct wedge {
 	return identityColor || (match && *strength != 0.0 && baseComponents[3] != 1.0);
 }
 
-- (CGColorRef)createColorWithBaseColor:(CGColorRef)base addColor:(CGColorRef)add {
+- (CGColorRef)copyColorWithBaseColor:(CGColorRef)base addColor:(CGColorRef)add {
 	CGColorRef c;
 	
 	CGColorSpaceRef space = CGColorGetColorSpace(base);
 	CGFloat colorComponents[CGColorSpaceGetNumberOfComponents(space)];
-	CGFloat *baseComponents = CGColorGetComponents(base);
-	CGFloat *addComponents = CGColorGetComponents(add);
+	CGFloat *baseComponents = (CGFloat *)CGColorGetComponents(base);
+	CGFloat *addComponents = (CGFloat *)CGColorGetComponents(add);
 	
 	[[self class] computeColor:colorComponents fromBaseColor:baseComponents withAddColor:addComponents forStrength:(1.0 - self.strength) model:CGColorSpaceGetModel(space)];
 	
@@ -808,7 +821,7 @@ struct wedge {
 - (CGColorRef)color {
 	CGColorRelease(color);
 	
-	color = [self createColorWithBaseColor:self.baseColor addColor:self.addColor];
+	color = [self copyColorWithBaseColor:self.baseColor addColor:self.addColor];
 	
 	return color;
 }
@@ -826,7 +839,7 @@ struct wedge {
 		add = transitionAddColor;
 	}
 	
-	transitionColor = [self createColorWithBaseColor:base addColor:add];
+	transitionColor = [self copyColorWithBaseColor:base addColor:add];
 	
 	return transitionColor;
 }
