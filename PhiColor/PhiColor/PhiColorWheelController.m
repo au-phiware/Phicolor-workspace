@@ -117,7 +117,6 @@
 						frame.size.width = MAX(MIN(frame.size.height * sinf(M_PI * 0.5 - minTopAngle) + CGRectGetMaxY(container) - targetPoint.y,
 												   frame.size.width),
 											   minFrame.size.width);
-						wedgeAngle = 2.0 * asinf(frame.size.width * 0.5 / frame.size.height);
 						transform = CGAffineTransformMakeRotation(minTopAngle + asinf(frame.size.width * 0.5 / frame.size.height));
 					}
 					break;
@@ -214,7 +213,7 @@
 		}
 		if (!CGRectContainsRect(container, minFrame) || !CGRectContainsRect(container, frame)) {
 			// Wedge cannot fit below target (too high or too wide)
-			CGFloat wedgeAngle = 2.0 * asinf(frame.size.width * 0.5 / height);
+			CGFloat wedgeAngle;
 			// Is wedge just too wide?
 			if (height >= minFrame.size.height) {
 				// Just lean it against the side
@@ -247,7 +246,6 @@
 							frame.size.width = MAX(MIN(frame.size.height * sinf(M_PI * 0.5 - minTopAngle) + targetPoint.y - CGRectGetMinY(container),
 													   frame.size.width),
 												   minFrame.size.width);
-							wedgeAngle = 2.0 * asinf(frame.size.width * 0.5 / frame.size.height);
 							transform = CGAffineTransformMakeRotation(M_PI - (minTopAngle + asinf(frame.size.width * 0.5 / frame.size.height)));
 						}
 						break;
