@@ -45,11 +45,37 @@
 	return [self resignFirstResponderAnimated:YES];
 }
 
+- (void)layoutSubviews {
+    [self setupPath];
+    [super layoutSubviews];
+}
+
 - (void)setupPath {
 	CAShapeLayer *theLayer = (CAShapeLayer *)self.layer;
+	CGRect patchBounds = self.bounds;
+	if (patchBounds.size.height > patchBounds.size.width) {
+		switch (self.contentVerticalAlignment) {
+			case UIControlContentVerticalAlignmentBottom:
+				patchBounds.origin.y += (patchBounds.size.height - patchBounds.size.width) / 2.0;
+			case UIControlContentVerticalAlignmentCenter:
+				patchBounds.origin.y += (patchBounds.size.height - patchBounds.size.width) / 2.0;
+			case UIControlContentVerticalAlignmentTop:
+				patchBounds.size.height = patchBounds.size.width;
+		}
+	} else {
+		switch (self.contentHorizontalAlignment) {
+			case UIControlContentHorizontalAlignmentRight:
+				patchBounds.origin.x += (patchBounds.size.width - patchBounds.size.height) / 2.0;
+			case UIControlContentHorizontalAlignmentCenter:
+				patchBounds.origin.x += (patchBounds.size.width - patchBounds.size.height) / 2.0;
+			case UIControlContentHorizontalAlignmentLeft:
+				patchBounds.size.width = patchBounds.size.height;
+		}
+	}
+
 	CGMutablePathRef path = CGPathCreateMutable();
-	if (theLayer.fillColor) {
-		CGPathAddEllipseInRect(path, NULL, self.bounds);
+	if (theLayer.fillColor && self.enabled) {
+		CGPathAddEllipseInRect(path, NULL, patchBounds);
 	} else {
 		CGPathAddArc(path, NULL,
 					 CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds),
@@ -60,7 +86,7 @@
 					 MIN(self.bounds.size.width, self.bounds.size.height) / 2.0,
 					 M_PI * 3.0 / 4.0, M_PI * 7.0 / 4.0, true);
 	}
-	((CAShapeLayer *)self.layer).path = path;
+	theLayer.path = path;
 	CGPathRelease(path);
 }
 - (void)setupLayer {
@@ -109,6 +135,7 @@
 				needsResetup = YES;
 			theLayer.fillColor = NULL;
 		}
+
 		if (needsResetup) {
 			[self setupPath];
 		}
