@@ -16,8 +16,7 @@
 		53B6529D176D617E001024A5 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B6529C176D617E001024A5 /* Default.png */; };
 		53B6529F176D617E001024A5 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B6529E176D617E001024A5 /* Default@2x.png */; };
 		53B652A1176D617E001024A5 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B652A0176D617E001024A5 /* Default-568h@2x.png */; };
-		53B652A4176D617E001024A5 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53B652A2176D617E001024A5 /* MainStoryboard_iPhone.storyboard */; };
-		53B652A7176D617E001024A5 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53B652A5176D617E001024A5 /* MainStoryboard_iPad.storyboard */; };
+		53B652A7176D617E001024A5 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53B652A5176D617E001024A5 /* MainStoryboard.storyboard */; };
 		53B652AA176D617E001024A5 /* PhiColorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B652A9176D617E001024A5 /* PhiColorViewController.m */; };
 		53B652B7176D6220001024A5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53B652B6176D6220001024A5 /* QuartzCore.framework */; };
 		53B652EE176D6B68001024A5 /* libPhiColor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53B652E9176D6993001024A5 /* libPhiColor.a */; };
@@ -37,8 +36,7 @@
 		53B6529C176D617E001024A5 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		53B6529E176D617E001024A5 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		53B652A0176D617E001024A5 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		53B652A3176D617E001024A5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
-		53B652A6176D617E001024A5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		53B652A6176D617E001024A5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		53B652A8176D617E001024A5 /* PhiColorViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhiColorViewController.h; sourceTree = "<group>"; };
 		53B652A9176D617E001024A5 /* PhiColorViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhiColorViewController.m; sourceTree = "<group>"; };
 		53B652B6176D6220001024A5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -95,8 +93,7 @@
 			children = (
 				53B65299176D617E001024A5 /* PhiColorAppDelegate.h */,
 				53B6529A176D617E001024A5 /* PhiColorAppDelegate.m */,
-				53B652A2176D617E001024A5 /* MainStoryboard_iPhone.storyboard */,
-				53B652A5176D617E001024A5 /* MainStoryboard_iPad.storyboard */,
+				53B652A5176D617E001024A5 /* MainStoryboard.storyboard */,
 				53B652A8176D617E001024A5 /* PhiColorViewController.h */,
 				53B652A9176D617E001024A5 /* PhiColorViewController.m */,
 				53B65291176D617E001024A5 /* Supporting Files */,
@@ -174,8 +171,7 @@
 				53B6529D176D617E001024A5 /* Default.png in Resources */,
 				53B6529F176D617E001024A5 /* Default@2x.png in Resources */,
 				53B652A1176D617E001024A5 /* Default-568h@2x.png in Resources */,
-				53B652A4176D617E001024A5 /* MainStoryboard_iPhone.storyboard in Resources */,
-				53B652A7176D617E001024A5 /* MainStoryboard_iPad.storyboard in Resources */,
+				53B652A7176D617E001024A5 /* MainStoryboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,20 +199,12 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		53B652A2176D617E001024A5 /* MainStoryboard_iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				53B652A3176D617E001024A5 /* en */,
-			);
-			name = MainStoryboard_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		53B652A5176D617E001024A5 /* MainStoryboard_iPad.storyboard */ = {
+		53B652A5176D617E001024A5 /* MainStoryboard.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				53B652A6176D617E001024A5 /* en */,
 			);
-			name = MainStoryboard_iPad.storyboard;
+			name = MainStoryboard.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
