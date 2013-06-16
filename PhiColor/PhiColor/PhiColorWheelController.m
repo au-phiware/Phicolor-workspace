@@ -30,6 +30,9 @@
 	return self;
 }
 
+- (void)hideColorWheel {
+	[self setWheelVisible:NO animated:YES];
+}
 -(PhiColorWheelView *)wheelView {
 	if (!wheelView) {
 		wheelView = [[PhiColorWheelView alloc] initWithFrame:CGRectMake(0, 0, preferredSize.width, preferredSize.height)];

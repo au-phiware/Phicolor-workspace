@@ -34,6 +34,7 @@
 
 @property (nonatomic, assign, getter=isWheelVisible) BOOL wheelVisible;
 -(void)setWheelVisible:(BOOL)visible animated:(BOOL)animate;
+-(void)hideColorWheel;
 
 -(void)setWheelColor:(CGColorRef)color;
 
