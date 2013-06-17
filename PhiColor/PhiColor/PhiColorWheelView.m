@@ -395,20 +395,49 @@
 
 - (void)setBaseAndAddColorForColor:(CGColorRef)color {
 	if (!CGColorEqualToColor(color, [(PhiColorWheelLayer *)[self layer] color])) {
+		CGFloat rgbComponents[4];
 		CGColorSpaceRef space = CGColorGetColorSpace(color);
 		CGColorSpaceModel model = CGColorSpaceGetModel(space);
 		size_t noc = CGColorSpaceGetNumberOfComponents(space);
 		CGColorRef c;
-		CGFloat *colorComponents = (CGFloat *)CGColorGetComponents(color);
-		CGFloat addComponents[noc + 1];
-		CGFloat baseComponents[noc + 1];
+		CGFloat colorComponents[5];
+		CGFloat addComponents[5];
+		CGFloat baseComponents[5];
 		CGFloat s = 0.0f;
 		BOOL match = NO;
 		int newAddColorIndex = addColorIndex;
 
+		memcpy(colorComponents, CGColorGetComponents(color), (noc + 1) * sizeof(CGFloat));
+
 		//NSLog(@"colorComponents:      %1.2f %1.2f %1.2f %1.2f", colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
 		switch (model) {
+			case kCGColorSpaceModelMonochrome:
+			case kCGColorSpaceModelRGB:
+				memcpy(rgbComponents, colorComponents, (noc + 1) * sizeof(CGFloat));
+
+				if (model == kCGColorSpaceModelRGB) {
+					colorComponents[3] = 1.0f;
+					colorComponents[0] = (1.0f - rgbComponents[0]);
+					colorComponents[1] = (1.0f - rgbComponents[1]);
+					colorComponents[2] = (1.0f - rgbComponents[2]);
+					CGFloat min = MIN(MIN(colorComponents[0], colorComponents[1]), colorComponents[2]);
+
+					if (min >= 1.0f || (colorComponents[0] == colorComponents[1] && colorComponents[1] == colorComponents[2])) {
+						colorComponents[0] = colorComponents[1] = colorComponents[2] = 0.0f;
+					} else {
+						colorComponents[0] = 1.0f - rgbComponents[0] / (1.0f - min);
+						colorComponents[1] = 1.0f - rgbComponents[1] / (1.0f - min);
+						colorComponents[2] = 1.0f - rgbComponents[2] / (1.0f - min);
+					}
+					colorComponents[3] = min;
+				} else if (model == kCGColorSpaceModelMonochrome) {
+					colorComponents[0] = colorComponents[1] = colorComponents[2] = 0.0;
+					colorComponents[3] = rgbComponents[0];
+				}
+				colorComponents[4] = rgbComponents[noc];
 			case kCGColorSpaceModelCMYK:
+				noc = 4;
+				model = kCGColorSpaceModelCMYK;
 				if (addColorIndex == [addColors count] - 1) //Do not try white
 					newAddColorIndex = --addColorIndex;
 				c = [[addColors objectAtIndex:newAddColorIndex] CGColor];
@@ -446,16 +475,17 @@
 				} else {
 					addColorIndex = newAddColorIndex;
 					((PhiColorWheelLayer *)self.layer).addColor = c;
-					
+
+					space = CGColorSpaceCreateDeviceCMYK();
 					c = CGColorCreate(space, baseComponents);
 					[self setBaseColor:[UIColor colorWithCGColor:c]];
 					CGColorRelease(c);
-					
+					CGColorSpaceRelease(space);
+
 					((PhiColorWheelLayer *)self.layer).strength = 1.0 - s;
 				}
 
 				break;
-			case kCGColorSpaceModelRGB:
 			case kCGColorSpaceModelLab:
 			default:
 				break;
