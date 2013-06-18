@@ -29,8 +29,8 @@
 
 + (PhiColorWheelController *)sharedColorWheelController;
 
-@property (nonatomic, assign) id delegate;
-@property (nonatomic, readonly) PhiColorWheelView *wheelView;
+@property (nonatomic, weak) id delegate;
+@property (nonatomic, readonly, strong) PhiColorWheelView *wheelView;
 
 @property (nonatomic, assign, getter=isWheelVisible) BOOL wheelVisible;
 -(void)setWheelVisible:(BOOL)visible animated:(BOOL)animate;

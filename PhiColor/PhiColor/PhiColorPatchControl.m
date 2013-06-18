@@ -37,9 +37,6 @@
 	owner.didInitColor = YES;
 }
 
-- (void)dealloc {
-	[super dealloc];
-}
 
 @end
 
@@ -153,7 +150,6 @@
 - (void)setupGestureRecognizers {
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(becomeFirstResponder)];
 	[self addGestureRecognizer:tap];
-	[tap release];
 }
 
 - (id)initWithFrame:(CGRect)frame {
@@ -236,7 +232,7 @@
 - (id<CAAction>)actionForLayer:(CALayer *)theLayer forKey:(NSString *)key {
 	if ([key isEqualToString:@"fillColor"]) {
 		CAAnimation *a = [CABasicAnimation animationWithKeyPath:key];
-		[a setDelegate:[[[PhiColorPatchAnimationDelegate alloc] initWithOwner:self] autorelease]];
+		[a setDelegate:[[PhiColorPatchAnimationDelegate alloc] initWithOwner:self]];
 		return a;
 	}
 	return [super actionForLayer:theLayer forKey:key];
@@ -271,9 +267,6 @@
 }
  */
 
-- (void)dealloc {
-    [super dealloc];
-}
 
 
 @end

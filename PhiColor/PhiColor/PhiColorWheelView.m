@@ -25,7 +25,7 @@
 		}
 	}
 	if ([ignoredTouches count]) {
-		touches = [[touches mutableCopy] autorelease];
+		touches = [touches mutableCopy];
 		[(NSMutableSet *)touches minusSet:ignoredTouches];
 		for (UITouch *touch in [ignoredTouches allObjects])
 			[self ignoreTouch:touch forEvent:event];
@@ -49,7 +49,7 @@
 		}
 	}
 	if ([ignoredTouches count]) {
-		touches = [[touches mutableCopy] autorelease];
+		touches = [touches mutableCopy];
 		[(NSMutableSet *)touches minusSet:ignoredTouches];
 		for (UITouch *touch in [ignoredTouches allObjects])
 			[self ignoreTouch:touch forEvent:event];
@@ -73,7 +73,7 @@
 		}
 	}
 	if ([ignoredTouches count]) {
-		touches = [[touches mutableCopy] autorelease];
+		touches = [touches mutableCopy];
 		[(NSMutableSet *)touches minusSet:ignoredTouches];
 		for (UITouch *touch in [ignoredTouches allObjects])
 			[self ignoreTouch:touch forEvent:event];
@@ -130,9 +130,7 @@
 	BOOL includeSecondary = [defaults boolForKey:@"include_secondary"];
 	BOOL includePrimary = [defaults boolForKey:@"include_primary"];
 	
-	if (baseColors) [baseColors release];
 	baseColors = [[NSMutableArray alloc] initWithCapacity:12];
-	if (addColors) [addColors release];
 	addColors = [[NSMutableArray alloc] initWithCapacity:5];
 
 	//Cyan
@@ -210,46 +208,40 @@
 	[CATransaction begin];
 	[CATransaction setValue:(id)kCFBooleanTrue
 					 forKey:kCATransactionDisableActions];
-	[(PhiColorWheelLayer *)self.layer setBaseColor:[[baseColors objectAtIndex:baseColorIndex] CGColor]];
-	[(PhiColorWheelLayer *)self.layer setAddColor:[[addColors objectAtIndex:addColorIndex] CGColor]];
+	[(PhiColorWheelLayer *)self.layer setBaseColor:[baseColors[baseColorIndex] CGColor]];
+	[(PhiColorWheelLayer *)self.layer setAddColor:[addColors[addColorIndex] CGColor]];
 	[CATransaction commit];
 }
 - (void)setupGestureRecognizers {
 	PhiColorWheelSegmentSlideGestureRecognizer *slider = [[PhiColorWheelSegmentSlideGestureRecognizer alloc] initWithTarget:self action:@selector(slideStrength:)];
 	slider.segment = @"strength";
 	[self addGestureRecognizer:slider];
-	[slider release];
 	
 	PhiColorWheelSegmentDoubleTapGestureRecognizer *dTap = [[PhiColorWheelSegmentDoubleTapGestureRecognizer alloc] initWithTarget:self action:@selector(promoteColor:)];
 	dTap.segment = @"strength";
 	dTap.numberOfTapsRequired = 2;
 	[self addGestureRecognizer:dTap];
-	[dTap release];
 	
 	PhiColorWheelSegmentFlickGestureRecognizer *flick;
 	flick = [[PhiColorWheelSegmentFlickGestureRecognizer alloc] initWithTarget:self action:@selector(flick:)];
 	flick.segment = @"baseColor";
 	flick.direction = UISwipeGestureRecognizerDirectionRight;
 	[self addGestureRecognizer:flick];
-	[flick release];
 
 	flick = [[PhiColorWheelSegmentFlickGestureRecognizer alloc] initWithTarget:self action:@selector(flick:)];
 	flick.segment = @"baseColor";
 	flick.direction = UISwipeGestureRecognizerDirectionLeft;
 	[self addGestureRecognizer:flick];
-	[flick release];
 	
 	flick = [[PhiColorWheelSegmentFlickGestureRecognizer alloc] initWithTarget:self action:@selector(flick:)];
 	flick.segment = @"addColor";
 	flick.direction = UISwipeGestureRecognizerDirectionLeft;
 	[self addGestureRecognizer:flick];
-	[flick release];
 
 	flick = [[PhiColorWheelSegmentFlickGestureRecognizer alloc] initWithTarget:self action:@selector(flick:)];
 	flick.segment = @"addColor";
 	flick.direction = UISwipeGestureRecognizerDirectionRight;
 	[self addGestureRecognizer:flick];
-	[flick release];
 }
 
 - (void)slideStrength:(UIPanGestureRecognizer *)slide {
@@ -277,7 +269,7 @@
 		else if (index < 0)
 			index += [baseColors count];
 		baseColorIndex = index;
-		nextColor = [[baseColors objectAtIndex:index] CGColor];
+		nextColor = [baseColors[index] CGColor];
 	} else if ([segment isEqualToString:@"addColor"]) {
 		index += addColorIndex;
 		if (index >= (NSInteger)[addColors count])
@@ -285,7 +277,7 @@
 		else if (index < 0)
 			index += [addColors count];
 		addColorIndex = index;
-		nextColor = [[addColors objectAtIndex:index] CGColor];
+		nextColor = [addColors[index] CGColor];
 	}
 	
 	return nextColor;
@@ -294,7 +286,7 @@
 - (void)flick:(PhiColorWheelSegmentFlickGestureRecognizer *)flick {
 	if (flick.direction & (UISwipeGestureRecognizerDirectionLeft | UISwipeGestureRecognizerDirectionRight)) {
 		//if (flick.direction == UISwipeGestureRecognizerDirectionRight) {
-			PhiColorWheelWedgeSpinAnimation *a = [[[PhiColorWheelWedgeSpinAnimation alloc] init] autorelease];
+			PhiColorWheelWedgeSpinAnimation *a = [[PhiColorWheelWedgeSpinAnimation alloc] init];
 			a.direction = flick.direction;
 			a.removedOnCompletion = NO;
 			a.toValue = [self colorForSegment:flick.segment inDirection:flick.direction];
@@ -334,7 +326,7 @@
 		[baseColors addObject:[self color]];
 		[self.layer setValue:(id)[[baseColors lastObject] CGColor] forKey:@"baseColor"];
 	} else {
-		[self.layer setValue:(id)[[baseColors objectAtIndex:baseColorIndex] CGColor] forKey:@"baseColor"];
+		[self.layer setValue:(id)[baseColors[baseColorIndex] CGColor] forKey:@"baseColor"];
 	}
 }
 
@@ -354,14 +346,6 @@
 		[self setupWedgeColors];
     }
     return self;
-}
-
-- (void)dealloc {
-	if (baseColors) [baseColors release];
-	baseColors = nil;
-	if (addColors) [addColors release];
-	addColors = nil;
-	[super dealloc];
 }
 
 - (UIColor *)color {
@@ -440,7 +424,7 @@
 				model = kCGColorSpaceModelCMYK;
 				if (addColorIndex == [addColors count] - 1) //Do not try white
 					newAddColorIndex = --addColorIndex;
-				c = [[addColors objectAtIndex:newAddColorIndex] CGColor];
+				c = [addColors[newAddColorIndex] CGColor];
 				memcpy(addComponents, CGColorGetComponents(c), (noc + 1) * sizeof(CGFloat));
 				memcpy(baseComponents,          addComponents, (noc + 1) * sizeof(CGFloat));
 				//NSLog(@"addComponents:        %1.2f %1.2f %1.2f %1.2f %1.2f", addComponents[0], addComponents[1], addComponents[2], addComponents[3], addComponents[4]);
@@ -450,7 +434,7 @@
 					newAddColorIndex = [addColors count] - 2; // start with black (use white as a last resort)
 					do {
 						if (newAddColorIndex != addColorIndex) {
-							c = [[addColors objectAtIndex:newAddColorIndex] CGColor];
+							c = [addColors[newAddColorIndex] CGColor];
 							if (model == CGColorSpaceGetModel(CGColorGetColorSpace(c))) {
 								memcpy(addComponents, CGColorGetComponents(c), (noc + 1) * sizeof(CGFloat));
 								//NSLog(@"addComponents:        %1.2f %1.2f %1.2f %1.2f %1.2f", addComponents[0], addComponents[1], addComponents[2], addComponents[3], addComponents[4]);

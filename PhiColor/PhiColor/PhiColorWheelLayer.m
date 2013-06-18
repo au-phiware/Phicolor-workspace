@@ -45,8 +45,6 @@
 	CGColorRelease(transitionColor);
 	CGColorRelease(transitionAddColor);
 	CGColorRelease(transitionBaseColor);
-	
-    [super dealloc];
 }
 
 + (BOOL)needsDisplayForKey:(NSString *)key {
@@ -65,13 +63,13 @@
 
 + (id)defaultValueForKey:(NSString *)key {
 	if ([key isEqualToString:@"wedgeMargin"]) {
-		return [NSNumber numberWithFloat:4.0];
+		return @4.0f;
 	} else if ([key isEqualToString:@"strength"]) {
-		return [NSNumber numberWithFloat:0.5];
+		return @0.5f;
 	} else if ([key isEqualToString:@"baseColorAngleWeight"]) {
-		return [NSNumber numberWithFloat:0.0];
+		return @0.0f;
 	} else if ([key isEqualToString:@"addColorAngleWeight"]) {
-		return [NSNumber numberWithFloat:0.0];
+		return @0.0f;
 	}
 	return [CALayer defaultValueForKey:key];
 }
@@ -82,7 +80,7 @@
 		return a;
 	}
 	if ([key isEqualToString:@"baseColor"] || [key isEqualToString:@"addColor"]) {
-		return [[[PhiColorWheelWedgeSpinAnimation alloc] init] autorelease];
+		return [[PhiColorWheelWedgeSpinAnimation alloc] init];
 	}
 	return [CALayer defaultActionForKey:key];
 }

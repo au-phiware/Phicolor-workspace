@@ -11,7 +11,7 @@
 	NSString *segment;
 }
 
-@property(retain, nonatomic) NSString * segment;
+@property(strong, nonatomic) NSString * segment;
 
 @end
 
@@ -20,7 +20,7 @@
 	NSString *segment;
 }
 
-@property(retain, nonatomic) NSString * segment;
+@property(strong, nonatomic) NSString * segment;
 
 @end
 
@@ -29,7 +29,7 @@
 	NSString *segment;
 }
 
-@property(retain, nonatomic) NSString * segment;
+@property(strong, nonatomic) NSString * segment;
 
 @end
 
@@ -40,15 +40,15 @@
 	NSInteger baseColorIndex;
 	NSInteger addColorIndex;
 	
-	id delegate;
+	id __weak delegate;
 }
 
-@property (nonatomic, assign) id delegate;
+@property (nonatomic, weak) id delegate;
 
-@property(retain, nonatomic) UIColor *baseColor;
-@property(retain, nonatomic) UIColor *addColor;
+@property(strong, nonatomic) UIColor *baseColor;
+@property(strong, nonatomic) UIColor *addColor;
 @property(nonatomic) CGFloat strength;
-@property(readonly, nonatomic) UIColor *color;
+- (UIColor *)color;
 
 - (void)setBaseAndAddColorForColor:(CGColorRef)color;
 

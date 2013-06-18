@@ -56,13 +56,13 @@
 		[self.delegate animationDidStop:self finished:flag];
 	}
 }
-/**/
+
 - (void)runActionForKey:(NSString *)key object:(id)object arguments:(NSDictionary *)dict {
 	if ([object isKindOfClass:[PhiColorWheelLayer class]] && ([key isEqualToString:@"baseColor"] || [key isEqualToString:@"addColor"])) {
 		PhiColorWheelLayer *layer = (PhiColorWheelLayer *)object;
 		CABasicAnimation *wheel = [CABasicAnimation animationWithKeyPath:[key stringByAppendingString:@"AngleWeight"]];
-		wheel.fromValue = [NSNumber numberWithFloat:0.0];
-		wheel.toValue = [NSNumber numberWithFloat:self.direction==PhiColorWheelWedgeSpinDirectionAnticlockwise?1.0:-1.0];
+		wheel.fromValue = @0.0f;
+		wheel.toValue = @(self.direction == PhiColorWheelWedgeSpinDirectionAnticlockwise ? 1.0f : -1.0f);
 		wheel.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
 		wheel.duration = self.duration; 
 		wheel.delegate = self;
@@ -91,40 +91,5 @@
 		[layer addAnimation:wheel forKey:[wheel keyPath]];
 	}
 }
-/*/
-- (void)runActionForKey:(NSString *)key object:(id)object arguments:(NSDictionary *)dict {
-	if ([object isKindOfClass:[ColorWheelLayer class]] && ([key isEqualToString:@"baseColor"] || [key isEqualToString:@"addColor"])) {
-		ColorWheelLayer *layer = (ColorWheelLayer *)object;
-		CAAnimationGroup *pair = [CAAnimationGroup animation];
-		CABasicAnimation *wheel = [CABasicAnimation animationWithKeyPath:[key stringByAppendingString:@"AngleWeight"]];
-		CAKeyframeAnimation *colorTransition = [CAKeyframeAnimation animationWithKeyPath:key];
-		wheel.fromValue = [NSNumber numberWithFloat:0.0];
-		wheel.toValue = [NSNumber numberWithFloat:self.direction==ColorWheelWedgeSpinDirectionAnticlockwise?1.0:-1.0];
-		pair.animations = [NSArray arrayWithObjects:wheel, colorTransition, nil];
-		pair.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
-		pair.duration = self.duration;
-		pair.delegate = self;
-		colorTransition.calculationMode = kCAAnimationDiscrete;
-		colorTransition.keyTimes = [NSArray arrayWithObjects:
-									[NSNumber numberWithFloat:0.0],
-//									[NSNumber numberWithFloat:1.0],
-									nil];
-		colorTransition.values = [NSArray arrayWithObjects:
-//								  self.fromValue?self.fromValue:[[layer presentationLayer] valueForKey:key],
-								  self.toValue?self.toValue:[[layer modelLayer] valueForKey:key],
-								  nil];
-		colorTransition.additive = self.additive;
-		colorTransition.cumulative = self.cumulative;
-		colorTransition.removedOnCompletion = self.removedOnCompletion;
-		
-		if ([key isEqualToString:@"baseColor"]) {
-			[layer setTransitionBaseColor:[[layer presentationLayer] valueForKey:key]];
-		} else if ([key isEqualToString:@"addColor"]) {
-			[layer setTransitionAddColor:[[layer presentationLayer] valueForKey:key]];
-		}
-		
-		[pair runActionForKey:key object:layer arguments:dict];
-	}
-}
-/**/
+
 @end

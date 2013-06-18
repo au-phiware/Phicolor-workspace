@@ -28,7 +28,7 @@
 	BOOL didInitColor;
 }
 
-@property (nonatomic, retain) UIColor *color;
+@property (nonatomic, strong) UIColor *color;
 
 - (void)editColor:(id)sender animated:(BOOL)animate;
 - (IBAction)editColor:(id)sender;

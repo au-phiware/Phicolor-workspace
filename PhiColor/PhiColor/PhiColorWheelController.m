@@ -43,8 +43,6 @@
 }
 
 - (void)resetWheelView {
-	if (wheelView) 
-		[wheelView release];
 	wheelView = nil;
 }
 
@@ -338,8 +336,8 @@
 	view.transform = transform;
 }
 -(void)setWheelVisible:(BOOL)visible animated:(BOOL)animate {
-	PhiColorWheelView *view = [self.wheelView retain];
-	id delegate = [view.delegate retain];
+	PhiColorWheelView *view = self.wheelView;
+	id delegate = view.delegate;
 	if (visible) {
 		if (!wheelVisible || !animate) {
 			[[[UIApplication sharedApplication] keyWindow] addSubview:view];
@@ -388,8 +386,6 @@
 			[view setDelegate:nil];
 		}
 	}
-	[view release];
-	[delegate release];
 }
 
 - (void)animationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context {
@@ -452,11 +448,4 @@
 	[self.wheelView setDelegate:delegate];
 }
 
-- (void)dealloc {
-	if (wheelView) 
-		[wheelView release];
-	wheelView = nil;
-	
-	[super dealloc];
-}
 @end
