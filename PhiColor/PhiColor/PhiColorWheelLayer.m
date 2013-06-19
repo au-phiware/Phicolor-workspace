@@ -290,9 +290,9 @@ struct wedge {
 					resultWedgeArc.end = wedgeAngle - spacedWedgeWidth * (angleWeight - 0.5);
 					if (resultWedgeArc.start < w.arc.end) {
 						if (self.baseColorAngleWeight >= self.addColorAngleWeight) {
-							transitionMidColor = [self copyColorWithBaseColor:self.baseColor addColor:transitionAddColor];
+							transitionMidColor = [self newColorWithBaseColor:self.baseColor addColor:transitionAddColor];
 						} else {
-							transitionMidColor = [self copyColorWithBaseColor:transitionBaseColor addColor:self.addColor];
+							transitionMidColor = [self newColorWithBaseColor:transitionBaseColor addColor:self.addColor];
 						}
 						resultWedge = CGPathCreateMutable();
 						CGPathAddArc(resultWedge, NULL, 0.0, 0.0, self.strength * (height - 4.0 * wwHeight) + 2.0 * wwHeight,
@@ -314,9 +314,9 @@ struct wedge {
 					resultWedgeArc.end = MIN(wedgeAngle - spacedWedgeWidth * (angleWeight + 0.5), wedgeAngle - spacedWedgeWidth * (midAngleWeight - 0.5));
 					if (resultWedgeArc.end > w.arc.start) {
 						if (self.baseColorAngleWeight <= self.addColorAngleWeight) {
-							transitionMidColor = [self copyColorWithBaseColor:self.baseColor addColor:transitionAddColor];
+							transitionMidColor = [self newColorWithBaseColor:self.baseColor addColor:transitionAddColor];
 						} else {
-							transitionMidColor = [self copyColorWithBaseColor:transitionBaseColor addColor:self.addColor];
+							transitionMidColor = [self newColorWithBaseColor:transitionBaseColor addColor:self.addColor];
 						}
 						resultWedge = CGPathCreateMutable();
 						CGPathAddArc(resultWedge, NULL, 0.0, 0.0, self.strength * (height - 4.0 * wwHeight) + 2.0 * wwHeight,
@@ -801,7 +801,7 @@ struct wedge {
 	return identityColor || (match && *strength != 0.0 && baseComponents[3] != 1.0);
 }
 
-- (CGColorRef)copyColorWithBaseColor:(CGColorRef)base addColor:(CGColorRef)add {
+- (CGColorRef)newColorWithBaseColor:(CGColorRef)base addColor:(CGColorRef)add {
 	CGColorRef c;
 	
 	CGColorSpaceRef space = CGColorGetColorSpace(base);
@@ -819,7 +819,7 @@ struct wedge {
 - (CGColorRef)color {
 	CGColorRelease(color);
 	
-	color = [self copyColorWithBaseColor:self.baseColor addColor:self.addColor];
+	color = [self newColorWithBaseColor:self.baseColor addColor:self.addColor];
 	
 	return color;
 }
@@ -837,7 +837,7 @@ struct wedge {
 		add = transitionAddColor;
 	}
 	
-	transitionColor = [self copyColorWithBaseColor:base addColor:add];
+	transitionColor = [self newColorWithBaseColor:base addColor:add];
 	
 	return transitionColor;
 }

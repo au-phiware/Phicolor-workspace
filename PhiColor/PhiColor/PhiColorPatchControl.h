@@ -25,7 +25,6 @@
 
 @interface PhiColorPatchControl : UIControl <PhiColorWheelResponder> {
 	IBOutlet id<PhiColorPatchControlDelegate> delegate;
-	BOOL didInitColor;
 }
 
 @property (nonatomic, strong) UIColor *color;

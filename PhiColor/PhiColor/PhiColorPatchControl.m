@@ -37,18 +37,10 @@
 	owner.didInitColor = YES;
 }
 
-
 @end
 
 
 @implementation PhiColorPatchControl
-
-- (BOOL)didInitColor {
-	return didInitColor;
-}
-- (void)setDidInitColor:(BOOL)flag {
-	didInitColor = flag;
-}
 
 + (Class)layerClass {
 	return [CAShapeLayer class];
@@ -156,7 +148,7 @@
     if ((self = [super initWithFrame:frame])) {
 		[self setupLayer];
 		[self setupGestureRecognizers];
-		didInitColor = NO;
+		self.didInitColor = NO;
     }
     return self;
 }
@@ -165,7 +157,7 @@
     if ((self = [super initWithCoder:aDecoder])) {
 		[self setupLayer];
 		[self setupGestureRecognizers];
-		didInitColor = NO;
+		self.didInitColor = NO;
     }
     return self;
 }
@@ -258,15 +250,5 @@
 - (void)colorDidChange:(PhiColorWheelView *)colorView {
 	self.color = colorView.color;
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
- */
-
-
 
 @end
