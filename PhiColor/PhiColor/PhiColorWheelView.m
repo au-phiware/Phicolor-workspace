@@ -378,7 +378,7 @@
 }
 
 - (void)setBaseAndAddColorForColor:(CGColorRef)color {
-	if (!CGColorEqualToColor(color, [(PhiColorWheelLayer *)[self layer] color])) {
+	if (color && !CGColorEqualToColor(color, [(PhiColorWheelLayer *)[self layer] color])) {
 		CGFloat rgbComponents[4];
 		CGColorSpaceRef space = CGColorGetColorSpace(color);
 		CGColorSpaceModel model = CGColorSpaceGetModel(space);
