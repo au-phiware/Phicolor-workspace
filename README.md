@@ -33,4 +33,4 @@ Substituting *your-fork* with your GitHub username in the URL.
 License
 -------
 
-[Apache](LICENSE)
+[Apache](NOTICE)
