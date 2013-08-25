@@ -1,6 +1,6 @@
-[submodule "PhiColorSample"]
-	path = PhiColorSample
-	url = ../Phitext/PhiColorSample
 [submodule "PhiColor"]
 	path = PhiColor
-	url = ../Phitext/Phicolor
+	url = git@github.com:au-phiware/PhiColor.git
+[submodule "PhiColorSample"]
+	path = PhiColorSample
+	url = git@github.com:au-phiware/PhiColorSample.git
