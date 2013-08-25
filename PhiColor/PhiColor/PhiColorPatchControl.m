@@ -9,10 +9,6 @@
 #import "PhiColorPatchControl.h"
 #import "PhiColorWheelView.h"
 
-@interface PhiColorPatchControl (PhiColorPatchAnimationDelegate)
-@property (nonatomic, assign) BOOL didInitColor;
-@end
-
 @interface PhiColorPatchAnimationDelegate : NSObject
 {
 	PhiColorPatchControl *owner;
