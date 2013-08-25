@@ -1,0 +1,6 @@
+[submodule "PhiColorSample"]
+	path = PhiColorSample
+	url = ../Phitext/PhiColorSample
+[submodule "PhiColor"]
+	path = PhiColor
+	url = ../Phitext/Phicolor
